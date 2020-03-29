@@ -61,6 +61,14 @@ void _copy(int *source, int *destiny, int size)
   }
 }
 
+void _copy_inverted(int *source, int *destiny, int size)
+{
+  for (int c = 1; c <= size; c++)
+  {
+    destiny[c - 1] = source[c];
+  }
+}
+
 int is_full(heap_t *heap)
 {
   if (heap->length == heap->capacity)
@@ -75,12 +83,12 @@ int is_empty(heap_t *heap)
   return 0;
 }
 
-void heap_down_max(heap_t *heap, int position)
+void heap_down_max(heap_t *heap, int position, int size)
 {
   int child = 2 * position;
-  if (child <= heap->length)
+  if (child <= size)
   {
-    if (child < heap->length)
+    if (child < size)
     {
       if (heap->arr[child + 1] > heap->arr[child])
       {
@@ -90,7 +98,7 @@ void heap_down_max(heap_t *heap, int position)
     if (heap->arr[position] < heap->arr[child])
     {
       _swap(heap->arr, position, child);
-      heap_down_max(heap, child);
+      heap_down_max(heap, child, size);
     }
   }
 }
@@ -134,7 +142,7 @@ int heap_remove_max(heap_t *heap)
 
     heap->arr[1] = heap->arr[heap->length];
     heap->length--;
-    heap_down_max(heap, 1);
+    heap_down_max(heap, 1, heap->length);
 
     // LOG:
     printf("LOG: removed(%i)\n", temp);
@@ -159,21 +167,41 @@ heap_t *heap_make_max(int *arr, int size)
 
   for (; position >= 1; position--)
   {
-    heap_down_max(heap, position);
+    heap_down_max(heap, position, size);
   }
   return heap;
+}
+
+void heap_sort_max(int *arr, int size)
+{
+  printf("HeapSortMax [IN ]: ");
+  _print_arr(arr, 0, size);
+
+  heap_t *heap;
+  heap = heap_make_max(arr, size);
+
+  for (int c = size; c >= 2; c--)
+  {
+    _swap(heap->arr, 1, c);
+    heap_down_max(heap, 1, c - 1);
+  }
+  _copy_inverted(heap->arr, arr, size);
+
+  printf("HeapSortMax [OUT]: ");
+  _print_arr(arr, 0, size);
+  printf("\n");
 }
 
 /**
  * =============== MIN
  **/
 
-void heap_down_min(heap_t *heap, int position)
+void heap_down_min(heap_t *heap, int position, int size)
 {
   int child = 2 * position;
-  if (child <= heap->length)
+  if (child <= size)
   {
-    if (child < heap->length)
+    if (child < size)
     {
       if (heap->arr[child + 1] < heap->arr[child])
       {
@@ -183,7 +211,7 @@ void heap_down_min(heap_t *heap, int position)
     if (heap->arr[position] > heap->arr[child])
     {
       _swap(heap->arr, position, child);
-      heap_down_min(heap, child);
+      heap_down_min(heap, child, size);
     }
   }
 }
@@ -227,7 +255,7 @@ int heap_remove_min(heap_t *heap)
 
     heap->arr[1] = heap->arr[heap->length];
     heap->length--;
-    heap_down_min(heap, 1);
+    heap_down_min(heap, 1, heap->length);
 
     // LOG:
     printf("LOG: removed(%i)\n", temp);
@@ -252,7 +280,28 @@ heap_t *heap_make_min(int arr[], int size)
 
   for (; position >= 1; position--)
   {
-    heap_down_min(heap, position);
+    heap_down_min(heap, position, size);
   }
   return heap;
+}
+
+void heap_sort_min(int *arr, int size)
+{
+  printf("HeapSortMin [IN ]: ");
+  _print_arr(arr, 0, size);
+
+  heap_t *heap;
+  heap = heap_make_min(arr, size);
+
+  for (int c = size; c >= 2; c--)
+  {
+    _swap(heap->arr, 1, c);
+    heap_down_min(heap, 1, c - 1);
+  }
+
+  _copy_inverted(heap->arr, arr, size);
+
+  printf("HeapSortMin [OUT]: ");
+  _print_arr(arr, 0, size);
+  printf("\n");
 }

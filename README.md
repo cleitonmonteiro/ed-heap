@@ -1,4 +1,4 @@
-# Heap implementation in c
+# Heap and HeapSort implementation in c
 
 ## Running
 ```sh
