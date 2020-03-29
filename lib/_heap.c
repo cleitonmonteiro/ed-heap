@@ -108,7 +108,7 @@ void heap_up_max(heap_t *heap, int position)
   }
 }
 
-void heap_insert(heap_t *heap, int new_value)
+void heap_insert_max(heap_t *heap, int new_value)
 {
   if (!is_full(heap))
   {
@@ -126,7 +126,7 @@ void heap_insert(heap_t *heap, int new_value)
   // FAILURE: Overflow
 }
 
-int heap_remove(heap_t *heap)
+int heap_remove_max(heap_t *heap)
 {
   if (!is_empty(heap))
   {
@@ -146,7 +146,7 @@ int heap_remove(heap_t *heap)
   return INT_MIN;
 }
 
-heap_t *make_max_heap(int *arr, int size)
+heap_t *heap_make_max(int *arr, int size)
 {
   heap_t *heap;
   heap = (heap_t *)calloc(1, sizeof(heap_t));
@@ -160,6 +160,99 @@ heap_t *make_max_heap(int *arr, int size)
   for (; position >= 1; position--)
   {
     heap_down_max(heap, position);
+  }
+  return heap;
+}
+
+/**
+ * =============== MIN
+ **/
+
+void heap_down_min(heap_t *heap, int position)
+{
+  int child = 2 * position;
+  if (child <= heap->length)
+  {
+    if (child < heap->length)
+    {
+      if (heap->arr[child + 1] < heap->arr[child])
+      {
+        child = child + 1;
+      }
+    }
+    if (heap->arr[position] > heap->arr[child])
+    {
+      _swap(heap->arr, position, child);
+      heap_down_min(heap, child);
+    }
+  }
+}
+
+void heap_up_min(heap_t *heap, int position)
+{
+  int father = (int)floor(position / 2);
+  if (father >= 1)
+  {
+    if (heap->arr[position] < heap->arr[father])
+    {
+      _swap(heap->arr, position, father);
+      heap_up_min(heap, father);
+    }
+  }
+}
+
+void heap_insert_min(heap_t *heap, int new_value)
+{
+  if (!is_full(heap))
+  {
+    // LOG:
+    printf("LOG: inserted(%i)\n", new_value);
+    heap->length++;
+    heap->arr[heap->length] = new_value;
+    heap_up_min(heap, heap->length);
+  }
+  else
+  {
+    // LOG: Underflow
+    printf("LOG: Overflow: insert(%i)\n", new_value);
+  }
+  // FAILURE: Overflow
+}
+
+int heap_remove_min(heap_t *heap)
+{
+  if (!is_empty(heap))
+  {
+    int temp = heap->arr[1];
+
+    heap->arr[1] = heap->arr[heap->length];
+    heap->length--;
+    heap_down_min(heap, 1);
+
+    // LOG:
+    printf("LOG: removed(%i)\n", temp);
+
+    return temp;
+  }
+  // LOG: Underflow
+  printf("LOG: Underflow: remove()\n");
+  return INT_MAX;
+}
+
+heap_t *heap_make_min(int arr[], int size)
+{
+  heap_t *heap;
+  heap = (heap_t *)calloc(1, sizeof(heap_t));
+  heap->length = size;
+  heap->capacity = MAX_CAPACITY;
+  heap->arr = (int *)calloc(heap->capacity, sizeof(int));
+  _copy(arr, heap->arr, size);
+
+  int position = (int)floor(heap->length / 2);
+
+  for (; position >= 1; position--)
+  {
+    heap_down_min(heap, position);
   }
   return heap;
 }

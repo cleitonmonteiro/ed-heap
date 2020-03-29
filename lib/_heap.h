@@ -19,8 +19,15 @@ int is_empty(heap_t *heap);
 
 void heap_down_max(heap_t *heap, int position);
 void heap_up_max(heap_t *heap, int position);
-void heap_insert(heap_t *heap, int new_value);
-int heap_remove(heap_t *heap);
-heap_t *make_max_heap(int arr[], int size);
+void heap_insert_max(heap_t *heap, int new_value);
+int heap_remove_max(heap_t *heap);
+heap_t *heap_make_max(int arr[], int size);
+
+void heap_down_min(heap_t *heap, int position);
+void heap_up_min(heap_t *heap, int position);
+void heap_insert_min(heap_t *heap, int new_value);
+int heap_remove_min(heap_t *heap);
+heap_t *heap_make_min(int arr[], int size);
+
 
 #endif
